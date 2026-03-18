@@ -1,5 +1,6 @@
 {% extends 'layout/base.html' %}
 {% load static %}
+{% load my_tags %}
 
 {% block title %}Products{% endblock %}
 
@@ -41,7 +42,7 @@
                             <div class="content">
                                 <div class="row">
                                     <div class="sidebar-3 sidebar-collection col-lg-3 col-md-4 col-sm-4">
-                                    {% include 'products/product_filter.html' %}
+                                        {% include 'products/product_filter.html' %}
                                     </div>
                                     <div class="col-sm-8 col-lg-9 col-md-8 product-container">
                                         <h1>Lingving Room</h1>
@@ -127,16 +128,20 @@
                                                                               class="formAddToCart">
                                                                             <input type="hidden" name="id_product"
                                                                                    value="1">
-                                                                            <a class="add-to-cart" href="#"
+                                                                            <a class="add-to-cart"
+                                                                               href="{% url 'products:cart' pk=product.id %}?next={{ request.get_full_path|urlencode }}"
                                                                                data-button-action="add-to-cart">
-                                                                                <i class="fa fa-shopping-cart"
+                                                                                <i {% if product|in_cart:request %}style="color: red;"{% endif %}
+                                                                                   class="fa fa-shopping-cart"
                                                                                    aria-hidden="true"></i>
                                                                             </a>
                                                                         </form>
-                                                                        <a class="addToWishlist" href="#" data-rel="1"
-                                                                           onclick="">
-                                                                            <i class="fa fa-heart"
-                                                                               aria-hidden="true"></i>
+                                                                        <a class="addToWishlist"
+                                                                           href="{% url 'products:wishlist' pk=product.id %}?next={{ request.get_full_path|urlencode }}">
+                                                                            <i {% if product|in_wishlist:request %}
+                                                                                style="color: red" {% endif %}
+                                                                                class="fa fa-heart"
+                                                                                aria-hidden="true"></i>
                                                                         </a>
                                                                         <a href="{% url 'products:detail' pk=product.id %}"
                                                                            class="quick-view hidden-sm-down"

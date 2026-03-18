@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
 
 from products.models import Product, ProductCategory, ProductTag, ProductColor, Manufacture, ProductStatus
@@ -74,3 +75,29 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'products/product-detail.html'
     context_object_name = 'products'
+
+
+def add_or_remove_like_from_wishlist(request, pk):
+    wishlist = request.session.get('wishlist', [])
+
+    if pk in wishlist:
+        wishlist.remove(pk)
+    else:
+        wishlist.append(pk)
+
+    request.session['wishlist'] = wishlist
+    next_url = request.GET.get('next', reverse_lazy('products:list'))
+    return redirect(next_url)
+
+
+def add_or_remove_from_cart(request, pk):
+    cart = request.session.get('cart', [])
+
+    if pk in cart:
+        cart.remove(pk)
+    else:
+        cart.append(pk)
+
+    request.session['cart'] = cart
+    next_url = request.GET.get('next', reverse_lazy('products:list'))
+    return redirect(next_url)
